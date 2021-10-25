@@ -11,7 +11,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 @Service
-public class GoogleSheetsService {
+public class GoogleSheetsService implements GoogleSheets {
     private final String applicationName;
     private final String spreadsheetId;
     private final String range;
@@ -32,6 +32,7 @@ public class GoogleSheetsService {
         ).toString();
     }
 
+    @Override
     public List<Customer> getValues() {
         RestTemplate rest = new RestTemplate();
         String sheetLink = buildUrl();
@@ -41,6 +42,7 @@ public class GoogleSheetsService {
         return values.stream().map(Customer::new).collect(Collectors.toList());
     }
 
+    @Override
     public Customer findCustomerByPhoneNumber(long phoneNumber) {
         List<Customer> customers = getValues();
         customers = customers
@@ -52,7 +54,8 @@ public class GoogleSheetsService {
         return customers.isEmpty() ? null : customers.get(0);
     }
 
-    public List<Customer> findCustomersByName(String lastName, String firstName, String secondName) {
+    @Override
+    public List<Customer> findCustomersByFullName(String lastName, String firstName, String secondName) {
         List<Customer> customers = getValues();
         customers = customers
                 .stream()

@@ -20,5 +20,4 @@ public class WebHookController {
     public BotApiMethod<?> onUpdateReceived(@RequestBody Update update) {
         return telegramBot.onWebhookUpdateReceived(update);
     }
-
 }

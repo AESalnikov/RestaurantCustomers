@@ -21,7 +21,7 @@ public class CustomerDao {
         return customerRepository.findById(id);
     }
 
-    public List<Customer> findCustomerByName(String lastName, String firstName, String secondName) {
+    public List<Customer> findCustomerByFullName(String lastName, String firstName, String secondName) {
         return customerRepository.findByLastNameAndFirstNameAndSecondName(lastName, firstName, secondName);
     }
 
@@ -33,9 +33,12 @@ public class CustomerDao {
         customerRepository.delete(customer);
     }
 
-
     public void saveCustomer(Customer customer) {
         customerRepository.save(customer);
+    }
+
+    public void saveAllCustomersFromGoogleSheet(List<Customer> customers) {
+        customerRepository.saveAll(customers);
     }
 
     public boolean isExist(long phoneNumber) {
