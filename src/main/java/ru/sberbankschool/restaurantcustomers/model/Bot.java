@@ -35,4 +35,5 @@ public class Bot extends SpringWebhookBot {
     public BotApiMethod<?> onWebhookUpdateReceived(Update update) {
         return telegramFacade.handleUpdate(update);
     }
+
 }

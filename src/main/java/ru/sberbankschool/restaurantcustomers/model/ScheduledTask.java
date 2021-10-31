@@ -4,26 +4,41 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
-import ru.sberbankschool.restaurantcustomers.dao.CustomerDao;
+import ru.sberbankschool.restaurantcustomers.service.DbService;
 import ru.sberbankschool.restaurantcustomers.service.GoogleSheetsService;
+
+import java.io.IOException;
 
 @EnableScheduling
 @Component
 @Slf4j
 public class ScheduledTask {
 
-    private final CustomerDao dao;
+    private final DbService dbService;
     private final GoogleSheetsService googleSheetsService;
 
-    public ScheduledTask(CustomerDao dao, GoogleSheetsService googleSheetsService) {
-        this.dao = dao;
+    public ScheduledTask(DbService dbService, GoogleSheetsService googleSheetsService) {
+        this.dbService = dbService;
         this.googleSheetsService = googleSheetsService;
     }
 
-//    @Scheduled(fixedRate = 60000)
+    //сначала обновляем БД пользователями
+//    @Scheduled(fixedRate = 30000)
     @Scheduled(cron = "0 0 10 * * *")
     public void updateDataBase() {
-        dao.saveAllCustomersFromGoogleSheet(googleSheetsService.getValues());
+        dbService.saveAllCustomersFromGoogleSheet(googleSheetsService.getValues());
         log.info("База данных обновлена!");
+    }
+
+    //После обновляем по всем пользователям инфу в гуглдоке
+    @Scheduled(cron = "0 0 11 * * *")
+//    @Scheduled(fixedRate = 60000)
+    public void updateGoogleSheet() {
+        try {
+            googleSheetsService.updateSheet();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        log.info("Гугл таблица обновлена!");
     }
 }

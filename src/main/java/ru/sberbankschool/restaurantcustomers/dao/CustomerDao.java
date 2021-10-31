@@ -1,6 +1,5 @@
 package ru.sberbankschool.restaurantcustomers.dao;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import ru.sberbankschool.restaurantcustomers.entity.Customer;
 import ru.sberbankschool.restaurantcustomers.repository.CustomerRepository;
@@ -12,7 +11,6 @@ public class CustomerDao {
 
     private final CustomerRepository customerRepository;
 
-    @Autowired
     public CustomerDao(CustomerRepository customerRepository) {
         this.customerRepository = customerRepository;
     }
@@ -21,16 +19,12 @@ public class CustomerDao {
         return customerRepository.findById(id);
     }
 
-    public List<Customer> findCustomerByFullName(String lastName, String firstName, String secondName) {
-        return customerRepository.findByLastNameAndFirstNameAndSecondName(lastName, firstName, secondName);
+    public Customer findCustomerByEmail(String email) {
+        return customerRepository.findByEmail(email);
     }
 
     public List<Customer> findAllCustomers() {
         return customerRepository.findAll();
-    }
-
-    public void removeCustomer(Customer customer) {
-        customerRepository.delete(customer);
     }
 
     public void saveCustomer(Customer customer) {
@@ -39,11 +33,6 @@ public class CustomerDao {
 
     public void saveAllCustomersFromGoogleSheet(List<Customer> customers) {
         customerRepository.saveAll(customers);
-    }
-
-    public boolean isExist(long phoneNumber) {
-        Customer customer = findCustomerByPhoneNumber(phoneNumber);
-        return customer != null;
     }
 }
 

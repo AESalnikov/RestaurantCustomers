@@ -7,5 +7,4 @@ import java.util.List;
 public interface GoogleSheets {
     List<Customer> getValues();
     Customer findCustomerByPhoneNumber(long phoneNumber);
-    List<Customer> findCustomersByFullName(String lastName, String firstName, String secondName);
     }

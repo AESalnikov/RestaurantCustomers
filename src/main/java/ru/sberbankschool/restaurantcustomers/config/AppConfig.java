@@ -17,3 +17,4 @@ public class AppConfig {
         return SetWebhook.builder().url(botConfig.getWebHookPath()).build();
     }
 }
+

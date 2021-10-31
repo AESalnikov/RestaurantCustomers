@@ -15,5 +15,9 @@ public class SheetsConfig {
     private String range;
     @Value("${sheets.key}")
     private String key;
+    @Value("${sheets.credentials}")
+    private String credentials;
+    @Value("${sheets.tokens}")
+    private String tokens;
 }
 

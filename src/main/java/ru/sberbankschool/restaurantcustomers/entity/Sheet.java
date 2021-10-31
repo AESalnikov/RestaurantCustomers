@@ -10,5 +10,5 @@ import java.util.List;
 public class Sheet {
     String range;
     String majorDimension;
-    List<List<String>> values;
+    List<List<Object>> values;
 }
