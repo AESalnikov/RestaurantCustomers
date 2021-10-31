@@ -21,6 +21,7 @@ import ru.sberbankschool.restaurantcustomers.config.SheetsConfig;
 import ru.sberbankschool.restaurantcustomers.entity.Customer;
 import ru.sberbankschool.restaurantcustomers.entity.Sheet;
 import ru.sberbankschool.restaurantcustomers.model.CustomerHandler;
+import ru.sberbankschool.restaurantcustomers.model.RatingHandler;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -114,6 +115,17 @@ public class GoogleSheetsService implements GoogleSheets {
         return customers.isEmpty() ? null : customers.get(0);
     }
 
+    public Customer findCustomerByEmail(String email) {
+        List<Customer> customers = getValues();
+        customers = customers
+                .stream()
+                .filter(
+                        customer -> customer.getEmail().equals(email)
+                )
+                .collect(Collectors.toList());
+        return customers.isEmpty() ? null : customers.get(0);
+    }
+
     private Sheet prepareSheetData() {
         List<Customer> customers = DB_SERVICE.getAllCustomers();
         Sheet sheet = new Sheet();
@@ -135,8 +147,8 @@ public class GoogleSheetsService implements GoogleSheets {
                     jCustomer.add(customer.getName());
                     jCustomer.add(customer.getEmail());
                     jCustomer.add(customer.getAddress());
-                    jCustomer.add(String.valueOf(new CustomerHandler(DB_SERVICE).getTips(customer)));
-                    jCustomer.add(String.valueOf(new CustomerHandler(DB_SERVICE).getRating(customer)));
+                    jCustomer.add(String.valueOf(new RatingHandler(DB_SERVICE).getTips(customer)));
+                    jCustomer.add(String.valueOf(new RatingHandler(DB_SERVICE).getRating(customer)));
                     resultList.add(jCustomer);
                 }
         );
@@ -157,4 +169,5 @@ public class GoogleSheetsService implements GoogleSheets {
         request.setValueInputOption(valueInputOption);
         request.execute();
     }
+
 }

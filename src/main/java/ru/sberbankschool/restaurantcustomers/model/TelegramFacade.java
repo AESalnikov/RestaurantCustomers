@@ -6,6 +6,7 @@ import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.objects.Message;
 import org.telegram.telegrambots.meta.api.objects.MessageEntity;
 import org.telegram.telegrambots.meta.api.objects.Update;
+import ru.sberbankschool.restaurantcustomers.entity.Customer;
 import ru.sberbankschool.restaurantcustomers.service.DbService;
 import ru.sberbankschool.restaurantcustomers.service.GoogleSheetsService;
 import ru.sberbankschool.restaurantcustomers.status.Status;
@@ -65,11 +66,30 @@ public class TelegramFacade {
                     return help(sendMessage);
                 case "/getcard": {
                     if (message.getText().split(" ").length == 2) {
-                        return new CustomerHandler(dbService).getCustomer(message, sendMessage);
+                        sendMessage = (SendMessage) new CustomerHandler(dbService).getCustomer(message, sendMessage);
+                        if (sendMessage == null) {
+                            String searchItem = message.getText().split(" ")[1];
+                            Customer customer = null;
+                            try {
+                                customer = googleSheetsService.findCustomerByPhoneNumber(Long.valueOf(searchItem));
+                            } catch (NumberFormatException e) {
+                                customer = googleSheetsService.findCustomerByEmail(searchItem);
+                            }
+                            if (customer == null) {
+                                return new MessageHandler().clientNotFound(sendMessage);
+                            }
+                            return new MessageHandler().createCustomersCard(
+                                    customer,
+                                    message.getChatId().toString(),
+                                    new RatingHandler(dbService).getRating(customer),
+                                    new RatingHandler(dbService).getTips(customer)
+                            );
+                        }
                     } else {
                         sendMessage.setText("Неверный формат команды");
                         return sendMessage;
                     }
+                    return sendMessage;
                 }
                 default: {
                     sendMessage.setText("Команда не найдена!");
