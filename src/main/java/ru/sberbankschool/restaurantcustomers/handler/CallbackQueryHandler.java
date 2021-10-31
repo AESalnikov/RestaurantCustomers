@@ -1,4 +1,4 @@
-package ru.sberbankschool.restaurantcustomers.model;
+package ru.sberbankschool.restaurantcustomers.handler;
 
 import org.springframework.stereotype.Component;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
@@ -6,6 +6,7 @@ import org.telegram.telegrambots.meta.api.objects.CallbackQuery;
 import ru.sberbankschool.restaurantcustomers.entity.Customer;
 import ru.sberbankschool.restaurantcustomers.entity.Rating;
 import ru.sberbankschool.restaurantcustomers.entity.Tips;
+import ru.sberbankschool.restaurantcustomers.model.KeyBoard;
 import ru.sberbankschool.restaurantcustomers.service.DbService;
 import ru.sberbankschool.restaurantcustomers.service.GoogleSheetsService;
 import ru.sberbankschool.restaurantcustomers.status.Status;

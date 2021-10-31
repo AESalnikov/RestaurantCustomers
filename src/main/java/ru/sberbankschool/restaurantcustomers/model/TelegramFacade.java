@@ -6,10 +6,12 @@ import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.objects.Message;
 import org.telegram.telegrambots.meta.api.objects.MessageEntity;
 import org.telegram.telegrambots.meta.api.objects.Update;
-import ru.sberbankschool.restaurantcustomers.entity.Customer;
+import ru.sberbankschool.restaurantcustomers.handler.CallbackQueryHandler;
+import ru.sberbankschool.restaurantcustomers.handler.CustomerHandler;
 import ru.sberbankschool.restaurantcustomers.service.DbService;
 import ru.sberbankschool.restaurantcustomers.service.GoogleSheetsService;
 import ru.sberbankschool.restaurantcustomers.status.Status;
+import ru.sberbankschool.restaurantcustomers.utilites.MessageUtils;
 
 import java.util.*;
 
@@ -41,7 +43,6 @@ public class TelegramFacade {
         return null;
     }
 
-
     private String getCommand(Message message) {
         Optional<MessageEntity> commandEntity = message
                 .getEntities()
@@ -61,29 +62,18 @@ public class TelegramFacade {
 
     private BotApiMethod<?> chooseCommand(String command, Message message, SendMessage sendMessage) {
         if (status.equals(Status.START)) {
+            if (command == null) {
+                return MessageUtils.commandNotFound(message);
+            }
             switch (command) {
                 case "/help":
                     return help(sendMessage);
                 case "/getcard": {
                     if (message.getText().split(" ").length == 2) {
-                        sendMessage = (SendMessage) new CustomerHandler(dbService).getCustomer(message, sendMessage);
+                        CustomerHandler customerHandler = new CustomerHandler(dbService, googleSheetsService);
+                        sendMessage = customerHandler.getCustomerFromDb(message);
                         if (sendMessage == null) {
-                            String searchItem = message.getText().split(" ")[1];
-                            Customer customer = null;
-                            try {
-                                customer = googleSheetsService.findCustomerByPhoneNumber(Long.valueOf(searchItem));
-                            } catch (NumberFormatException e) {
-                                customer = googleSheetsService.findCustomerByEmail(searchItem);
-                            }
-                            if (customer == null) {
-                                return new MessageHandler().clientNotFound(sendMessage);
-                            }
-                            return new MessageHandler().createCustomersCard(
-                                    customer,
-                                    message.getChatId().toString(),
-                                    new RatingHandler(dbService).getRating(customer),
-                                    new RatingHandler(dbService).getTips(customer)
-                            );
+                            sendMessage = customerHandler.getCustomerFromGoogleSheets(message);
                         }
                     } else {
                         sendMessage.setText("Неверный формат команды");
@@ -92,8 +82,7 @@ public class TelegramFacade {
                     return sendMessage;
                 }
                 default: {
-                    sendMessage.setText("Команда не найдена!");
-                    return sendMessage;
+                    return MessageUtils.commandNotFound(message);
                 }
             }
         } else {

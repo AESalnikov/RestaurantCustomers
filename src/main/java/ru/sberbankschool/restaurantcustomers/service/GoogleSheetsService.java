@@ -20,8 +20,7 @@ import org.springframework.web.client.RestTemplate;
 import ru.sberbankschool.restaurantcustomers.config.SheetsConfig;
 import ru.sberbankschool.restaurantcustomers.entity.Customer;
 import ru.sberbankschool.restaurantcustomers.entity.Sheet;
-import ru.sberbankschool.restaurantcustomers.model.CustomerHandler;
-import ru.sberbankschool.restaurantcustomers.model.RatingHandler;
+import ru.sberbankschool.restaurantcustomers.handler.RatingHandler;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;
