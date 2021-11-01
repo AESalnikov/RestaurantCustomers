@@ -13,6 +13,7 @@ import ru.sberbankschool.restaurantcustomers.service.GoogleSheetsService;
 import ru.sberbankschool.restaurantcustomers.status.Status;
 import ru.sberbankschool.restaurantcustomers.utilites.MessageUtils;
 
+import java.io.IOException;
 import java.util.*;
 
 @Component

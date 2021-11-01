@@ -27,7 +27,7 @@ public class RatingHandler {
     public double getRating(Customer customer) {
         List<Integer> marks = dbService.getMarks(customer);
         double sum = 0;
-        for (Integer mark: marks)
+        for (Integer mark : marks)
             sum += mark;
         double result = sum / marks.size();
         return (double) Math.round(result * 10) / 10;

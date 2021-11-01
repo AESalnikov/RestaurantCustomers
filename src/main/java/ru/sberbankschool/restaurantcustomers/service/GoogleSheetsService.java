@@ -14,9 +14,7 @@ import com.google.api.client.util.store.FileDataStoreFactory;
 import com.google.api.services.sheets.v4.Sheets;
 import com.google.api.services.sheets.v4.SheetsScopes;
 import com.google.api.services.sheets.v4.model.ValueRange;
-import org.springframework.http.*;
 import org.springframework.stereotype.Service;
-import org.springframework.web.client.RestTemplate;
 import ru.sberbankschool.restaurantcustomers.config.SheetsConfig;
 import ru.sberbankschool.restaurantcustomers.entity.Customer;
 import ru.sberbankschool.restaurantcustomers.entity.Sheet;
@@ -28,6 +26,7 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.security.GeneralSecurityException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -84,20 +83,17 @@ public class GoogleSheetsService implements GoogleSheets {
                 .build();
     }
 
-    private String buildUrl() {
-        return new StringBuilder(
-                "https://sheets.googleapis.com/v4/spreadsheets/" + SPREADSHEET_ID +
-                        "/values/" + APPLICATION_NAME + RANGE +
-                        "?key=" + KEY
-        ).toString();
-    }
-
     @Override
     public List<Customer> getValues() {
-        RestTemplate rest = new RestTemplate();
-        String sheetLink = buildUrl();
-        ResponseEntity<Sheet> responseEntity = rest.getForEntity(sheetLink, Sheet.class);
-        List<List<Object>> values = responseEntity.getBody().getValues();
+        ValueRange response = null;
+        try {
+            response = SHEETS_SERVICE.spreadsheets().values()
+                    .get(SPREADSHEET_ID, APPLICATION_NAME)
+                    .execute();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        List<List<Object>> values = response.getValues();
         values.remove(0);
         return values.stream().map(Customer::new).collect(Collectors.toList());
     }
@@ -114,6 +110,7 @@ public class GoogleSheetsService implements GoogleSheets {
         return customers.isEmpty() ? null : customers.get(0);
     }
 
+    @Override
     public Customer findCustomerByEmail(String email) {
         List<Customer> customers = getValues();
         customers = customers
@@ -125,29 +122,41 @@ public class GoogleSheetsService implements GoogleSheets {
         return customers.isEmpty() ? null : customers.get(0);
     }
 
+    private List<Object> titleForGoogleSheet() {
+        return Arrays.asList(
+                "Номер телефона",
+                "Имя",
+                "Электронная почта",
+                "Адрес",
+                "Чаевые",
+                "Рейтинг"
+        );
+    }
+
+    private List<Object> parseCustomerForSheetsData(Customer customer) {
+        RatingHandler ratingHandler = new RatingHandler(DB_SERVICE);
+        List<Object> jCustomer = new ArrayList<>();
+        jCustomer.add(customer.getPhoneNumber());
+        jCustomer.add(customer.getName());
+        jCustomer.add(customer.getEmail());
+        jCustomer.add(customer.getAddress());
+        jCustomer.add(String.valueOf(ratingHandler.getTips(customer)));
+        jCustomer.add(String.valueOf(ratingHandler.getRating(customer)));
+        return jCustomer;
+    }
+
+
     private Sheet prepareSheetData() {
         List<Customer> customers = DB_SERVICE.getAllCustomers();
         Sheet sheet = new Sheet();
         sheet.setRange(APPLICATION_NAME + "!A1:F" + (customers.size() + 1));
         sheet.setMajorDimension("ROWS");
-        List<Object> title = new ArrayList<>();
-        title.add("Номер телефона");
-        title.add("Имя");
-        title.add("Электронная почта");
-        title.add("Адрес");
-        title.add("Чаевые");
-        title.add("Рейтинг");
+        List<Object> title = titleForGoogleSheet();
         List<List<Object>> resultList = new ArrayList<>();
         resultList.add(title);
         customers.forEach(
                 customer -> {
-                    List<Object> jCustomer = new ArrayList<>();
-                    jCustomer.add(customer.getPhoneNumber());
-                    jCustomer.add(customer.getName());
-                    jCustomer.add(customer.getEmail());
-                    jCustomer.add(customer.getAddress());
-                    jCustomer.add(String.valueOf(new RatingHandler(DB_SERVICE).getTips(customer)));
-                    jCustomer.add(String.valueOf(new RatingHandler(DB_SERVICE).getRating(customer)));
+                    List<Object> jCustomer = parseCustomerForSheetsData(customer);
                     resultList.add(jCustomer);
                 }
         );

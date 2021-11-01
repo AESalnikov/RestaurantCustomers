@@ -26,7 +26,8 @@ public class Customer {
     @OneToMany(mappedBy = "customer", cascade = CascadeType.ALL, orphanRemoval = false)
     private List<Tips> tips = new ArrayList<>();
 
-    public Customer() {}
+    public Customer() {
+    }
 
     public Customer(List<Object> client) {
         this.phoneNumber = Long.valueOf(String.valueOf(client.get(0)));

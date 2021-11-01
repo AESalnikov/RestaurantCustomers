@@ -2,9 +2,7 @@ package ru.sberbankschool.restaurantcustomers.model;
 
 import lombok.Getter;
 import lombok.Setter;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-import org.telegram.telegrambots.bots.DefaultBotOptions;
 import org.telegram.telegrambots.meta.api.methods.BotApiMethod;
 import org.telegram.telegrambots.meta.api.methods.updates.SetWebhook;
 import org.telegram.telegrambots.meta.api.objects.Update;
@@ -20,12 +18,6 @@ public class Bot extends SpringWebhookBot {
 
     private TelegramFacade telegramFacade;
 
-    public Bot(TelegramFacade telegramFacade, DefaultBotOptions options, SetWebhook setWebhook) {
-        super(options, setWebhook);
-        this.telegramFacade = telegramFacade;
-    }
-
-    @Autowired
     public Bot(TelegramFacade telegramFacade, SetWebhook setWebhook) {
         super(setWebhook);
         this.telegramFacade = telegramFacade;

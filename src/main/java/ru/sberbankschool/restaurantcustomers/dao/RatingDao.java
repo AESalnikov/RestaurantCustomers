@@ -1,6 +1,5 @@
 package ru.sberbankschool.restaurantcustomers.dao;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import ru.sberbankschool.restaurantcustomers.entity.Customer;
 import ru.sberbankschool.restaurantcustomers.entity.Rating;
@@ -13,7 +12,6 @@ import java.util.stream.Collectors;
 public class RatingDao {
     private RatingRepository ratingRepository;
 
-    @Autowired
     public RatingDao(RatingRepository ratingRepository) {
         this.ratingRepository = ratingRepository;
     }

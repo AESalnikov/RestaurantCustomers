@@ -6,5 +6,8 @@ import java.util.List;
 
 public interface GoogleSheets {
     List<Customer> getValues();
+
     Customer findCustomerByPhoneNumber(long phoneNumber);
-    }
+
+    Customer findCustomerByEmail(String email);
+}

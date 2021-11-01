@@ -60,7 +60,7 @@ public class CallbackQueryHandler {
     private SendMessage tipsMessage(String chatId, Customer customer) {
         SendMessage sendMessage = new SendMessage();
         sendMessage.setChatId(chatId);
-        sendMessage.setText(customer  + "\n\nКлиент оставил чаевые?");
+        sendMessage.setText(customer + "\n\nКлиент оставил чаевые?");
         sendMessage.setReplyMarkup(new KeyBoard().createTipsKeyBoard());
         return sendMessage;
     }

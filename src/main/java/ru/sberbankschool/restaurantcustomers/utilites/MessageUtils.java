@@ -27,6 +27,7 @@ public class MessageUtils {
         sendMessage.setText("Клиент не найден!");
         return sendMessage;
     }
+
     public SendMessage commandNotFound(Message message) {
         SendMessage sendMessage = new SendMessage();
         sendMessage.setChatId(message.getChatId().toString());

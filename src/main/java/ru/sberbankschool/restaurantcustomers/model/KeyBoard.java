@@ -27,6 +27,7 @@ public class KeyBoard {
 
         return inlineKeyboardMarkup;
     }
+
     public InlineKeyboardMarkup createRatingKeyBoard() {
         InlineKeyboardMarkup inlineKeyboardMarkup = new InlineKeyboardMarkup();
 

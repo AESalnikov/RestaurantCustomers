@@ -1,7 +1,6 @@
 package ru.sberbankschool.restaurantcustomers.handler;
 
 import org.springframework.stereotype.Component;
-import org.telegram.telegrambots.meta.api.methods.BotApiMethod;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.objects.Message;
 import ru.sberbankschool.restaurantcustomers.entity.Customer;
@@ -50,10 +49,10 @@ public class CustomerHandler {
             dbService.saveCustomer(customer);
         return customer == null ? MessageUtils.clientNotFound(message)
                 : MessageUtils.createCustomersCard(
-                    customer,
-                    message.getChatId().toString(),
-                    new RatingHandler(dbService).getRating(customer),
-                    new RatingHandler(dbService).getTips(customer)
-                );
+                customer,
+                message.getChatId().toString(),
+                new RatingHandler(dbService).getRating(customer),
+                new RatingHandler(dbService).getTips(customer)
+        );
     }
 }
