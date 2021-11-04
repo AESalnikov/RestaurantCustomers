@@ -25,10 +25,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.security.GeneralSecurityException;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
@@ -37,8 +34,6 @@ public class GoogleSheetsService implements GoogleSheets {
     private final List<String> SCOPES = Collections.singletonList(SheetsScopes.SPREADSHEETS);
     private final String APPLICATION_NAME;
     private final String SPREADSHEET_ID;
-    private final String RANGE;
-    private final String KEY;
     private final String CREDENTIALS_FILE_PATH;
     private final String TOKENS_DIRECTORY_PATH;
     private final DbService DB_SERVICE;
@@ -47,8 +42,6 @@ public class GoogleSheetsService implements GoogleSheets {
     public GoogleSheetsService(SheetsConfig sheetsConfig, DbService dbService) throws GeneralSecurityException, IOException {
         this.APPLICATION_NAME = sheetsConfig.getApplicationName();
         this.SPREADSHEET_ID = sheetsConfig.getSpreadsheetId();
-        this.RANGE = sheetsConfig.getRange();
-        this.KEY = sheetsConfig.getKey();
         this.CREDENTIALS_FILE_PATH = sheetsConfig.getCredentials();
         this.TOKENS_DIRECTORY_PATH = sheetsConfig.getTokens();
         this.SHEETS_SERVICE = createSheetsService(APPLICATION_NAME);
@@ -93,7 +86,7 @@ public class GoogleSheetsService implements GoogleSheets {
         } catch (IOException e) {
             e.printStackTrace();
         }
-        List<List<Object>> values = response.getValues();
+        List<List<Object>> values = Objects.requireNonNull(response).getValues();
         values.remove(0);
         return values.stream().map(Customer::new).collect(Collectors.toList());
     }

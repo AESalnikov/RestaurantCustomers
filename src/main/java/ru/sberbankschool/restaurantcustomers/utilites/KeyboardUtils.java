@@ -1,16 +1,16 @@
-package ru.sberbankschool.restaurantcustomers.model;
+package ru.sberbankschool.restaurantcustomers.utilites;
 
-import org.springframework.stereotype.Component;
+import lombok.experimental.UtilityClass;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.InlineKeyboardMarkup;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.InlineKeyboardButton;
 
 import java.util.ArrayList;
 import java.util.List;
 
-@Component
-public class KeyBoard {
+@UtilityClass
+public class KeyboardUtils {
 
-    public InlineKeyboardMarkup createMainKeyBoard() {
+    public InlineKeyboardMarkup estimateKeyboard() {
         InlineKeyboardMarkup inlineKeyboardMarkup = new InlineKeyboardMarkup();
 
         InlineKeyboardButton button1 = new InlineKeyboardButton();
@@ -28,7 +28,7 @@ public class KeyBoard {
         return inlineKeyboardMarkup;
     }
 
-    public InlineKeyboardMarkup createRatingKeyBoard() {
+    public InlineKeyboardMarkup ratingKeyBoard() {
         InlineKeyboardMarkup inlineKeyboardMarkup = new InlineKeyboardMarkup();
 
         InlineKeyboardButton button1 = new InlineKeyboardButton();
@@ -66,7 +66,7 @@ public class KeyBoard {
         return inlineKeyboardMarkup;
     }
 
-    public InlineKeyboardMarkup createTipsKeyBoard() {
+    public InlineKeyboardMarkup tipsKeyBoard() {
         InlineKeyboardMarkup inlineKeyboardMarkup = new InlineKeyboardMarkup();
 
         InlineKeyboardButton button1 = new InlineKeyboardButton();

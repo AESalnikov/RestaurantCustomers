@@ -11,19 +11,21 @@ import ru.sberbankschool.restaurantcustomers.utilites.MessageUtils;
 @Component
 public class CustomerHandler {
 
-    private DbService dbService;
-    private GoogleSheetsService googleSheetsService;
+    private final DbService dbService;
+    private final GoogleSheetsService googleSheetsService;
+    private final RatingHandler ratingHandler;
 
-    public CustomerHandler(DbService dbService, GoogleSheetsService googleSheetsService) {
+    public CustomerHandler(DbService dbService, GoogleSheetsService googleSheetsService, RatingHandler ratingHandler) {
         this.dbService = dbService;
         this.googleSheetsService = googleSheetsService;
+        this.ratingHandler = ratingHandler;
     }
 
     public SendMessage getCustomerFromDb(Message message) {
         String searchItem = message.getText().split(" ")[1];
         Customer customer;
         try {
-            customer = dbService.getCustomerByPhoneNumber(Long.valueOf(searchItem));
+            customer = dbService.getCustomerByPhoneNumber(Long.parseLong(searchItem));
         } catch (NumberFormatException e) {
             customer = dbService.getCustomerByEmail(searchItem);
         }
@@ -32,8 +34,8 @@ public class CustomerHandler {
         return customer == null ? null : MessageUtils.createCustomersCard(
                 customer,
                 message.getChatId().toString(),
-                new RatingHandler(dbService).getRating(customer),
-                new RatingHandler(dbService).getTips(customer)
+                ratingHandler.getRating(customer),
+                ratingHandler.getTips(customer)
         );
     }
 
@@ -41,7 +43,7 @@ public class CustomerHandler {
         String searchItem = message.getText().split(" ")[1];
         Customer customer;
         try {
-            customer = googleSheetsService.findCustomerByPhoneNumber(Long.valueOf(searchItem));
+            customer = googleSheetsService.findCustomerByPhoneNumber(Long.parseLong(searchItem));
         } catch (NumberFormatException e) {
             customer = googleSheetsService.findCustomerByEmail(searchItem);
         }
@@ -51,8 +53,8 @@ public class CustomerHandler {
                 : MessageUtils.createCustomersCard(
                 customer,
                 message.getChatId().toString(),
-                new RatingHandler(dbService).getRating(customer),
-                new RatingHandler(dbService).getTips(customer)
+                ratingHandler.getRating(customer),
+                ratingHandler.getTips(customer)
         );
     }
 }

@@ -10,7 +10,7 @@ import java.util.stream.Collectors;
 
 @Service
 public class RatingDao {
-    private RatingRepository ratingRepository;
+    private final RatingRepository ratingRepository;
 
     public RatingDao(RatingRepository ratingRepository) {
         this.ratingRepository = ratingRepository;
@@ -19,7 +19,7 @@ public class RatingDao {
     public List<Integer> getCustomersMarkByPhoneNumber(Customer customer) {
         return ratingRepository.findByCustomerId(customer.getPhoneNumber())
                 .stream()
-                .map(rating -> rating.getMark())
+                .map(Rating::getMark)
                 .collect(Collectors.toList());
     }
 

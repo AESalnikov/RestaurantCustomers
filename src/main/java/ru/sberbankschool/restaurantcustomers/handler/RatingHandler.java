@@ -6,12 +6,11 @@ import ru.sberbankschool.restaurantcustomers.service.DbService;
 
 import java.util.List;
 import java.util.Objects;
-import java.util.stream.Collectors;
 
 @Component
 public class RatingHandler {
 
-    private DbService dbService;
+    private final DbService dbService;
 
     public RatingHandler(DbService dbService) {
         this.dbService = dbService;
@@ -19,8 +18,8 @@ public class RatingHandler {
 
     public double getTips(Customer customer) {
         List<String> tips = dbService.getTips(customer);
-        int trueTips = tips.stream().filter(t -> Objects.equals(Boolean.valueOf(t), true)).collect(Collectors.toList()).size();
-        double result = Double.valueOf(trueTips) / tips.size() * 100;
+        int trueTips = (int) tips.stream().filter(t -> Objects.equals(Boolean.valueOf(t), true)).count();
+        double result = (double) trueTips / tips.size() * 100;
         return (double) Math.round(result * 10) / 10;
     }
 

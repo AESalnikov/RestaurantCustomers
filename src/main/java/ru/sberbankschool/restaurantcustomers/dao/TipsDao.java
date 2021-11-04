@@ -20,7 +20,7 @@ public class TipsDao {
     public List<String> getCustomersTipsByPhoneNumber(Customer customer) {
         return tipsRepository.findByCustomerId(customer.getPhoneNumber())
                 .stream()
-                .map(tips -> tips.getTips())
+                .map(Tips::getTips)
                 .collect(Collectors.toList());
     }
 

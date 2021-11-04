@@ -22,15 +22,15 @@ public class ScheduledTask {
         this.googleSheetsService = googleSheetsService;
     }
 
-    @Scheduled(fixedRate = 30000)
-//    @Scheduled(cron = "0 0 10 * * *")
+    //    @Scheduled(fixedRate = 30000)
+    @Scheduled(cron = "0 0 5 * * *")
     public void updateDataBase() {
         dbService.saveAllCustomersFromGoogleSheet(googleSheetsService.getValues());
         log.info("База данных обновлена!");
     }
 
-    //    @Scheduled(cron = "0 0 11 * * *")
-    @Scheduled(fixedRate = 60000)
+    @Scheduled(cron = "0 0 6 * * *")
+//    @Scheduled(fixedRate = 60000)
     public void updateGoogleSheet() {
         try {
             googleSheetsService.updateSheet();

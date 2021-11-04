@@ -21,16 +21,16 @@ public class Customer {
     private String email;
     @Column(name = "address")
     private String address;
-    @OneToMany(mappedBy = "customer", cascade = CascadeType.ALL, orphanRemoval = false)
+    @OneToMany(mappedBy = "customer", cascade = CascadeType.ALL)
     private List<Rating> rating = new ArrayList<>();
-    @OneToMany(mappedBy = "customer", cascade = CascadeType.ALL, orphanRemoval = false)
+    @OneToMany(mappedBy = "customer", cascade = CascadeType.ALL)
     private List<Tips> tips = new ArrayList<>();
 
     public Customer() {
     }
 
     public Customer(List<Object> client) {
-        this.phoneNumber = Long.valueOf(String.valueOf(client.get(0)));
+        this.phoneNumber = Long.parseLong(String.valueOf(client.get(0)));
         this.name = String.valueOf(client.get(1));
         this.email = String.valueOf(client.get(2));
         this.address = String.valueOf(client.get(3));

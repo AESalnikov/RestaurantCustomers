@@ -11,10 +11,6 @@ public class SheetsConfig {
     private String applicationName;
     @Value("${sheets.id}")
     private String spreadsheetId;
-    @Value("${sheets.range}")
-    private String range;
-    @Value("${sheets.key}")
-    private String key;
     @Value("${sheets.credentials}")
     private String credentials;
     @Value("${sheets.tokens}")

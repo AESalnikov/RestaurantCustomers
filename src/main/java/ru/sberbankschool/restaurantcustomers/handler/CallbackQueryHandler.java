@@ -6,31 +6,28 @@ import org.telegram.telegrambots.meta.api.objects.CallbackQuery;
 import ru.sberbankschool.restaurantcustomers.entity.Customer;
 import ru.sberbankschool.restaurantcustomers.entity.Rating;
 import ru.sberbankschool.restaurantcustomers.entity.Tips;
-import ru.sberbankschool.restaurantcustomers.model.KeyBoard;
+import ru.sberbankschool.restaurantcustomers.utilites.KeyboardUtils;
 import ru.sberbankschool.restaurantcustomers.service.DbService;
-import ru.sberbankschool.restaurantcustomers.service.GoogleSheetsService;
-import ru.sberbankschool.restaurantcustomers.status.Status;
+import ru.sberbankschool.restaurantcustomers.constants.Step;
 
-import static ru.sberbankschool.restaurantcustomers.model.TelegramFacade.status;
+import static ru.sberbankschool.restaurantcustomers.model.TelegramFacade.step;
 
 @Component
 public class CallbackQueryHandler {
 
-    private DbService dbService;
-    private GoogleSheetsService googleSheetsService;
+    private final DbService dbService;
 
-    public CallbackQueryHandler(DbService dbService, GoogleSheetsService googleSheetsService) {
+    public CallbackQueryHandler(DbService dbService) {
         this.dbService = dbService;
-        this.googleSheetsService = googleSheetsService;
     }
 
     public SendMessage handler(CallbackQuery callbackQuery) {
         String data = callbackQuery.getData();
         switch (data) {
             case "Оценить": {
-                if (status.equals(Status.START)) {
-                    status = Status.RATING_STEP;
-                    return mainEvent(callbackQuery, data);
+                if (step.equals(Step.START)) {
+                    step = Step.RATING_STEP;
+                    return mainEvent(callbackQuery);
                 }
                 break;
             }
@@ -39,16 +36,16 @@ public class CallbackQueryHandler {
             case "3":
             case "4":
             case "5": {
-                if (status.equals(Status.RATING_STEP)) {
-                    status = Status.TIPS_STEP;
+                if (step.equals(Step.RATING_STEP)) {
+                    step = Step.TIPS_STEP;
                     return ratingEvent(callbackQuery, data);
                 }
                 break;
             }
             case "True":
             case "False": {
-                if (status.equals(Status.TIPS_STEP)) {
-                    status = Status.START;
+                if (step.equals(Step.TIPS_STEP)) {
+                    step = Step.START;
                     return tipsEvent(callbackQuery, data);
                 }
             }
@@ -61,24 +58,24 @@ public class CallbackQueryHandler {
         SendMessage sendMessage = new SendMessage();
         sendMessage.setChatId(chatId);
         sendMessage.setText(customer + "\n\nКлиент оставил чаевые?");
-        sendMessage.setReplyMarkup(new KeyBoard().createTipsKeyBoard());
+        sendMessage.setReplyMarkup(KeyboardUtils.tipsKeyBoard());
         return sendMessage;
     }
 
     private long getPhone(String customerInfo) {
-        return Long.valueOf(customerInfo
+        return Long.parseLong(customerInfo
                 .split("Телефонный номер")[1]
                 .split(" ")[1]
                 .split("\n")[0]);
     }
 
-    private SendMessage mainEvent(CallbackQuery callbackQuery, String data) {
+    private SendMessage mainEvent(CallbackQuery callbackQuery) {
         String chatId = callbackQuery.getMessage().getChatId().toString();
         String customerInfo = callbackQuery.getMessage().getText();
         SendMessage sendMessage = new SendMessage();
         sendMessage.setChatId(chatId);
         sendMessage.setText(customerInfo);
-        sendMessage.setReplyMarkup(new KeyBoard().createRatingKeyBoard());
+        sendMessage.setReplyMarkup(KeyboardUtils.ratingKeyBoard());
         return sendMessage;
     }
 
@@ -88,7 +85,7 @@ public class CallbackQueryHandler {
         Customer customer = dbService.getCustomerByPhoneNumber(getPhone(customerInfo));
         Rating rating = new Rating();
         rating.setCustomer(customer);
-        rating.setMark(Integer.valueOf(mark));
+        rating.setMark(Integer.parseInt(mark));
         dbService.saveMark(rating);
         return tipsMessage(chatId, customer);
     }

@@ -16,7 +16,7 @@ public class CustomerDao {
     }
 
     public Customer findCustomerByPhoneNumber(long id) {
-        return customerRepository.findById(id);
+        return customerRepository.findByPhoneNumber(id);
     }
 
     public Customer findCustomerByEmail(String email) {
