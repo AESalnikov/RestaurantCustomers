@@ -71,7 +71,10 @@ public class GoogleSheetsService implements GoogleSheets {
 
         final NetHttpTransport HTTP_TRANSPORT = GoogleNetHttpTransport.newTrustedTransport();
 
-        return new Sheets.Builder(httpTransport, jsonFactory, getCredentials(HTTP_TRANSPORT))
+        Credential credential = getCredentials(HTTP_TRANSPORT);
+        credential.refreshToken();
+
+        return new Sheets.Builder(httpTransport, jsonFactory, credential)
                 .setApplicationName(applicationName)
                 .build();
     }
