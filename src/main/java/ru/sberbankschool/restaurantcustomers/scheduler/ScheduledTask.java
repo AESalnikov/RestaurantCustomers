@@ -1,4 +1,4 @@
-package ru.sberbankschool.restaurantcustomers.model;
+package ru.sberbankschool.restaurantcustomers.scheduler;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.scheduling.annotation.EnableScheduling;

@@ -10,7 +10,7 @@ import ru.sberbankschool.restaurantcustomers.utilites.KeyboardUtils;
 import ru.sberbankschool.restaurantcustomers.service.DbService;
 import ru.sberbankschool.restaurantcustomers.constants.Step;
 
-import static ru.sberbankschool.restaurantcustomers.model.TelegramFacade.step;
+import static ru.sberbankschool.restaurantcustomers.telegram.TelegramFacade.step;
 
 @Component
 public class CallbackQueryHandler {

@@ -1,4 +1,4 @@
-package ru.sberbankschool.restaurantcustomers.model;
+package ru.sberbankschool.restaurantcustomers.telegram;
 
 import org.springframework.stereotype.Component;
 import org.telegram.telegrambots.meta.api.methods.BotApiMethod;

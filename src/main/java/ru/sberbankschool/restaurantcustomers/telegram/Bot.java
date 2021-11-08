@@ -1,4 +1,4 @@
-package ru.sberbankschool.restaurantcustomers.model;
+package ru.sberbankschool.restaurantcustomers.telegram;
 
 import lombok.Getter;
 import lombok.Setter;

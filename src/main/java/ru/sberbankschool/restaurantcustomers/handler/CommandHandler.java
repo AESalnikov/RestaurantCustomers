@@ -10,7 +10,7 @@ import ru.sberbankschool.restaurantcustomers.utilites.MessageUtils;
 
 import java.util.Optional;
 
-import static ru.sberbankschool.restaurantcustomers.model.TelegramFacade.step;
+import static ru.sberbankschool.restaurantcustomers.telegram.TelegramFacade.step;
 
 @Component
 public class CommandHandler {
