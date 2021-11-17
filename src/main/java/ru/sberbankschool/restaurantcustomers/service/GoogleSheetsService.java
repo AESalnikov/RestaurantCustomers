@@ -1,16 +1,11 @@
 package ru.sberbankschool.restaurantcustomers.service;
 
 import com.google.api.client.auth.oauth2.Credential;
-import com.google.api.client.extensions.java6.auth.oauth2.AuthorizationCodeInstalledApp;
-import com.google.api.client.extensions.jetty.auth.oauth2.LocalServerReceiver;
-import com.google.api.client.googleapis.auth.oauth2.GoogleAuthorizationCodeFlow;
-import com.google.api.client.googleapis.auth.oauth2.GoogleClientSecrets;
+import com.google.api.client.googleapis.auth.oauth2.GoogleCredential;
 import com.google.api.client.googleapis.javanet.GoogleNetHttpTransport;
-import com.google.api.client.http.HttpTransport;
 import com.google.api.client.http.javanet.NetHttpTransport;
 import com.google.api.client.json.JsonFactory;
 import com.google.api.client.json.gson.GsonFactory;
-import com.google.api.client.util.store.FileDataStoreFactory;
 import com.google.api.services.sheets.v4.Sheets;
 import com.google.api.services.sheets.v4.SheetsScopes;
 import com.google.api.services.sheets.v4.model.ValueRange;
@@ -20,10 +15,7 @@ import ru.sberbankschool.restaurantcustomers.entity.Customer;
 import ru.sberbankschool.restaurantcustomers.entity.Sheet;
 import ru.sberbankschool.restaurantcustomers.handler.RatingHandler;
 
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
+import java.io.*;
 import java.security.GeneralSecurityException;
 import java.util.*;
 import java.util.stream.Collectors;
@@ -35,46 +27,34 @@ public class GoogleSheetsService implements GoogleSheets {
     private final String APPLICATION_NAME;
     private final String SPREADSHEET_ID;
     private final String CREDENTIALS_FILE_PATH;
-    private final String TOKENS_DIRECTORY_PATH;
-    private final DbService DB_SERVICE;
+    private final String SERVICE_ADMIN;
+    private final DaoService DB_SERVICE;
     private final Sheets SHEETS_SERVICE;
 
-    public GoogleSheetsService(SheetsConfig sheetsConfig, DbService dbService) throws GeneralSecurityException, IOException {
+    public GoogleSheetsService(SheetsConfig sheetsConfig, DaoService dbService) throws GeneralSecurityException, IOException {
         this.APPLICATION_NAME = sheetsConfig.getApplicationName();
         this.SPREADSHEET_ID = sheetsConfig.getSpreadsheetId();
         this.CREDENTIALS_FILE_PATH = sheetsConfig.getCredentials();
-        this.TOKENS_DIRECTORY_PATH = sheetsConfig.getTokens();
+        this.SERVICE_ADMIN = sheetsConfig.getServiceAdmin();
         this.SHEETS_SERVICE = createSheetsService(APPLICATION_NAME);
         this.DB_SERVICE = dbService;
     }
 
-    private Credential getCredentials(final NetHttpTransport HTTP_TRANSPORT) throws IOException {
-
-        InputStream in = GoogleSheetsService.class.getResourceAsStream(CREDENTIALS_FILE_PATH);
-        if (in == null) {
-            throw new FileNotFoundException("Resource not found: " + CREDENTIALS_FILE_PATH);
-        }
-        GoogleClientSecrets clientSecrets = GoogleClientSecrets.load(JSON_FACTORY, new InputStreamReader(in));
-
-        GoogleAuthorizationCodeFlow flow = new GoogleAuthorizationCodeFlow.Builder(
-                HTTP_TRANSPORT, JSON_FACTORY, clientSecrets, SCOPES)
-                .setDataStoreFactory(new FileDataStoreFactory(new java.io.File(TOKENS_DIRECTORY_PATH)))
-                .setAccessType("offline")
+    private Credential getCredentials(NetHttpTransport httpTransport) throws IOException, GeneralSecurityException {
+        return new GoogleCredential.Builder()
+                .setTransport(httpTransport)
+                .setJsonFactory(JSON_FACTORY)
+                .setServiceAccountId(SERVICE_ADMIN)
+                .setServiceAccountPrivateKeyFromP12File(new File(CREDENTIALS_FILE_PATH))
+                .setServiceAccountScopes(SCOPES)
                 .build();
-        LocalServerReceiver receiver = new LocalServerReceiver.Builder().setPort(5000).build();
-        return new AuthorizationCodeInstalledApp(flow, receiver).authorize("user");
     }
 
     private Sheets createSheetsService(String applicationName) throws IOException, GeneralSecurityException {
-        HttpTransport httpTransport = GoogleNetHttpTransport.newTrustedTransport();
-        JsonFactory jsonFactory = GsonFactory.getDefaultInstance();
 
-        final NetHttpTransport HTTP_TRANSPORT = GoogleNetHttpTransport.newTrustedTransport();
+        final NetHttpTransport httpTransport = GoogleNetHttpTransport.newTrustedTransport();
 
-        Credential credential = getCredentials(HTTP_TRANSPORT);
-        credential.refreshToken();
-
-        return new Sheets.Builder(httpTransport, jsonFactory, credential)
+        return new Sheets.Builder(httpTransport, JSON_FACTORY, getCredentials(httpTransport))
                 .setApplicationName(applicationName)
                 .build();
     }
