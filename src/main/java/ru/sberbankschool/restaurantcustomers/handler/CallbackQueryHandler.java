@@ -7,7 +7,7 @@ import ru.sberbankschool.restaurantcustomers.entity.Customer;
 import ru.sberbankschool.restaurantcustomers.entity.Rating;
 import ru.sberbankschool.restaurantcustomers.entity.Tips;
 import ru.sberbankschool.restaurantcustomers.utilites.KeyboardUtils;
-import ru.sberbankschool.restaurantcustomers.service.DbService;
+import ru.sberbankschool.restaurantcustomers.service.DaoService;
 import ru.sberbankschool.restaurantcustomers.constants.Step;
 
 import static ru.sberbankschool.restaurantcustomers.telegram.TelegramFacade.step;
@@ -15,9 +15,9 @@ import static ru.sberbankschool.restaurantcustomers.telegram.TelegramFacade.step
 @Component
 public class CallbackQueryHandler {
 
-    private final DbService dbService;
+    private final DaoService dbService;
 
-    public CallbackQueryHandler(DbService dbService) {
+    public CallbackQueryHandler(DaoService dbService) {
         this.dbService = dbService;
     }
 

@@ -7,17 +7,17 @@ import org.telegram.telegrambots.meta.api.objects.Message;
 import org.telegram.telegrambots.meta.api.objects.Update;
 import ru.sberbankschool.restaurantcustomers.handler.CallbackQueryHandler;
 import ru.sberbankschool.restaurantcustomers.handler.CommandHandler;
-import ru.sberbankschool.restaurantcustomers.service.DbService;
+import ru.sberbankschool.restaurantcustomers.service.DaoService;
 import ru.sberbankschool.restaurantcustomers.constants.Step;
 
 @Component
 public class TelegramFacade {
 
     public static Step step = Step.START;
-    private final DbService dbService;
+    private final DaoService dbService;
     private final CommandHandler commandHandle;
 
-    public TelegramFacade(DbService dbService, CommandHandler commandHandler) {
+    public TelegramFacade(DaoService dbService, CommandHandler commandHandler) {
         this.dbService = dbService;
         this.commandHandle = commandHandler;
     }

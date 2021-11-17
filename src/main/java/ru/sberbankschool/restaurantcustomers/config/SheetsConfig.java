@@ -13,7 +13,7 @@ public class SheetsConfig {
     private String spreadsheetId;
     @Value("${sheets.credentials}")
     private String credentials;
-    @Value("${sheets.tokens}")
-    private String tokens;
+    @Value("${sheets.admin}")
+    private String serviceAdmin;
 }
 

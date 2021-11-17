@@ -11,12 +11,12 @@ import ru.sberbankschool.restaurantcustomers.entity.Tips;
 import java.util.List;
 
 @Service
-public class DbService {
+public class DaoService {
     CustomerDao customerDao;
     RatingDao ratingDao;
     TipsDao tipsDao;
 
-    public DbService(CustomerDao customerDao, RatingDao ratingDao, TipsDao tipsDao) {
+    public DaoService(CustomerDao customerDao, RatingDao ratingDao, TipsDao tipsDao) {
         this.customerDao = customerDao;
         this.ratingDao = ratingDao;
         this.tipsDao = tipsDao;
