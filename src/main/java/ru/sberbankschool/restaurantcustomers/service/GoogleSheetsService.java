@@ -28,10 +28,10 @@ public class GoogleSheetsService implements GoogleSheets {
     private final String SPREADSHEET_ID;
     private final String CREDENTIALS_FILE_PATH;
     private final String SERVICE_ADMIN;
-    private final DaoService DB_SERVICE;
+    private final DatabaseService DB_SERVICE;
     private final Sheets SHEETS_SERVICE;
 
-    public GoogleSheetsService(SheetsConfig sheetsConfig, DaoService dbService) throws GeneralSecurityException, IOException {
+    public GoogleSheetsService(SheetsConfig sheetsConfig, DatabaseService dbService) throws GeneralSecurityException, IOException {
         this.APPLICATION_NAME = sheetsConfig.getApplicationName();
         this.SPREADSHEET_ID = sheetsConfig.getSpreadsheetId();
         this.CREDENTIALS_FILE_PATH = sheetsConfig.getCredentials();

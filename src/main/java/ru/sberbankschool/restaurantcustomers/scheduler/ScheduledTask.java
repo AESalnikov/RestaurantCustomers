@@ -4,7 +4,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
-import ru.sberbankschool.restaurantcustomers.service.DaoService;
+import ru.sberbankschool.restaurantcustomers.service.DatabaseService;
 import ru.sberbankschool.restaurantcustomers.service.GoogleSheetsService;
 
 import java.io.IOException;
@@ -14,10 +14,10 @@ import java.io.IOException;
 @Slf4j
 public class ScheduledTask {
 
-    private final DaoService dbService;
+    private final DatabaseService dbService;
     private final GoogleSheetsService googleSheetsService;
 
-    public ScheduledTask(DaoService dbService, GoogleSheetsService googleSheetsService) {
+    public ScheduledTask(DatabaseService dbService, GoogleSheetsService googleSheetsService) {
         this.dbService = dbService;
         this.googleSheetsService = googleSheetsService;
     }
