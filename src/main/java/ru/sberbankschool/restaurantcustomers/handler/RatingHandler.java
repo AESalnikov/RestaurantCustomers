@@ -2,7 +2,7 @@ package ru.sberbankschool.restaurantcustomers.handler;
 
 import org.springframework.stereotype.Component;
 import ru.sberbankschool.restaurantcustomers.entity.Customer;
-import ru.sberbankschool.restaurantcustomers.service.DatabaseService;
+import ru.sberbankschool.restaurantcustomers.service.DatabaseServiceImpl;
 
 import java.util.List;
 import java.util.Objects;
@@ -10,9 +10,9 @@ import java.util.Objects;
 @Component
 public class RatingHandler {
 
-    private final DatabaseService dbService;
+    private final DatabaseServiceImpl dbService;
 
-    public RatingHandler(DatabaseService dbService) {
+    public RatingHandler(DatabaseServiceImpl dbService) {
         this.dbService = dbService;
     }
 

@@ -7,25 +7,24 @@ import org.telegram.telegrambots.meta.api.objects.Message;
 import org.telegram.telegrambots.meta.api.objects.Update;
 import ru.sberbankschool.restaurantcustomers.handler.CallbackQueryHandler;
 import ru.sberbankschool.restaurantcustomers.handler.CommandHandler;
-import ru.sberbankschool.restaurantcustomers.service.DatabaseService;
 import ru.sberbankschool.restaurantcustomers.constants.Step;
 
 @Component
 public class TelegramFacade {
 
     public static Step step = Step.START;
-    private final DatabaseService dbService;
     private final CommandHandler commandHandle;
+    private final CallbackQueryHandler callbackQueryHandler;
 
-    public TelegramFacade(DatabaseService dbService, CommandHandler commandHandler) {
-        this.dbService = dbService;
+    public TelegramFacade(CommandHandler commandHandler, CallbackQueryHandler callbackQueryHandler) {
         this.commandHandle = commandHandler;
+        this.callbackQueryHandler = callbackQueryHandler;
     }
 
     public BotApiMethod<?> updateHandler(Update update) {
 
         if (update.hasCallbackQuery()) {
-            return new CallbackQueryHandler(dbService).handler(update.getCallbackQuery());
+            return callbackQueryHandler.handler(update.getCallbackQuery());
         }
 
         if (update.getMessage() != null && update.getMessage().hasEntities()) {

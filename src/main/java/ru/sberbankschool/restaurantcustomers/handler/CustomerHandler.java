@@ -4,18 +4,18 @@ import org.springframework.stereotype.Component;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.objects.Message;
 import ru.sberbankschool.restaurantcustomers.entity.Customer;
-import ru.sberbankschool.restaurantcustomers.service.DatabaseService;
+import ru.sberbankschool.restaurantcustomers.service.DatabaseServiceImpl;
 import ru.sberbankschool.restaurantcustomers.service.GoogleSheetsService;
 import ru.sberbankschool.restaurantcustomers.utilites.MessageUtils;
 
 @Component
 public class CustomerHandler {
 
-    private final DatabaseService dbService;
+    private final DatabaseServiceImpl dbService;
     private final GoogleSheetsService googleSheetsService;
     private final RatingHandler ratingHandler;
 
-    public CustomerHandler(DatabaseService dbService, GoogleSheetsService googleSheetsService, RatingHandler ratingHandler) {
+    public CustomerHandler(DatabaseServiceImpl dbService, GoogleSheetsService googleSheetsService, RatingHandler ratingHandler) {
         this.dbService = dbService;
         this.googleSheetsService = googleSheetsService;
         this.ratingHandler = ratingHandler;
