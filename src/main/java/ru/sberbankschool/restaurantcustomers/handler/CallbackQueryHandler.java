@@ -25,7 +25,7 @@ public class CallbackQueryHandler {
         String data = callbackQuery.getData();
         switch (data) {
             case "Оценить": {
-                if (step.equals(Step.START)) {
+                if (step == Step.START) {
                     step = Step.RATING_STEP;
                     return mainEvent(callbackQuery);
                 }
@@ -36,7 +36,7 @@ public class CallbackQueryHandler {
             case "3":
             case "4":
             case "5": {
-                if (step.equals(Step.RATING_STEP)) {
+                if (step == Step.RATING_STEP) {
                     step = Step.TIPS_STEP;
                     return ratingEvent(callbackQuery, data);
                 }
@@ -44,7 +44,7 @@ public class CallbackQueryHandler {
             }
             case "True":
             case "False": {
-                if (step.equals(Step.TIPS_STEP)) {
+                if (step == Step.TIPS_STEP) {
                     step = Step.START;
                     return tipsEvent(callbackQuery, data);
                 }
