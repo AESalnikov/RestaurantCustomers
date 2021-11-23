@@ -37,7 +37,7 @@ public class CommandHandler {
     }
 
     public BotApiMethod<?> chooseCommand(String command, Message message, SendMessage sendMessage) {
-        if (step.equals(Step.START)) {
+        if (step == Step.START) {
             if (command == null) {
                 return MessageUtils.commandNotFound(message);
             }
