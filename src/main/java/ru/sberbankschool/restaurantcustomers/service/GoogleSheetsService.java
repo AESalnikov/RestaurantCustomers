@@ -22,31 +22,33 @@ import java.util.stream.Collectors;
 
 @Service
 public class GoogleSheetsService implements GoogleSheets {
-    private final JsonFactory JSON_FACTORY = GsonFactory.getDefaultInstance();
-    private final List<String> SCOPES = Collections.singletonList(SheetsScopes.SPREADSHEETS);
-    private final String APPLICATION_NAME;
-    private final String SPREADSHEET_ID;
-    private final String CREDENTIALS_FILE_PATH;
-    private final String SERVICE_ADMIN;
-    private final DatabaseService DB_SERVICE;
-    private final Sheets SHEETS_SERVICE;
+    private final JsonFactory jsonFactory = GsonFactory.getDefaultInstance();
+    private final List<String> scopes = Collections.singletonList(SheetsScopes.SPREADSHEETS);
+    private final String applicationName;
+    private final String spreadsheetId;
+    private final String credentialsFilePath;
+    private final String serviceAdmin;
+    private final DatabaseServiceImpl dbService;
+    private final Sheets sheetsService;
+    private final RatingHandler ratingHandler;
 
-    public GoogleSheetsService(SheetsConfig sheetsConfig, DatabaseService dbService) throws GeneralSecurityException, IOException {
-        this.APPLICATION_NAME = sheetsConfig.getApplicationName();
-        this.SPREADSHEET_ID = sheetsConfig.getSpreadsheetId();
-        this.CREDENTIALS_FILE_PATH = sheetsConfig.getCredentials();
-        this.SERVICE_ADMIN = sheetsConfig.getServiceAdmin();
-        this.SHEETS_SERVICE = createSheetsService(APPLICATION_NAME);
-        this.DB_SERVICE = dbService;
+    public GoogleSheetsService(SheetsConfig sheetsConfig, DatabaseServiceImpl dbService, RatingHandler ratingHandler) throws GeneralSecurityException, IOException {
+        this.applicationName = sheetsConfig.getApplicationName();
+        this.spreadsheetId = sheetsConfig.getSpreadsheetId();
+        this.credentialsFilePath = sheetsConfig.getCredentials();
+        this.serviceAdmin = sheetsConfig.getServiceAdmin();
+        this.sheetsService = createSheetsService(applicationName);
+        this.dbService = dbService;
+        this.ratingHandler = ratingHandler;
     }
 
     private Credential getCredentials(NetHttpTransport httpTransport) throws IOException, GeneralSecurityException {
         return new GoogleCredential.Builder()
                 .setTransport(httpTransport)
-                .setJsonFactory(JSON_FACTORY)
-                .setServiceAccountId(SERVICE_ADMIN)
-                .setServiceAccountPrivateKeyFromP12File(new File(CREDENTIALS_FILE_PATH))
-                .setServiceAccountScopes(SCOPES)
+                .setJsonFactory(jsonFactory)
+                .setServiceAccountId(serviceAdmin)
+                .setServiceAccountPrivateKeyFromP12File(new File(credentialsFilePath))
+                .setServiceAccountScopes(scopes)
                 .build();
     }
 
@@ -54,7 +56,7 @@ public class GoogleSheetsService implements GoogleSheets {
 
         final NetHttpTransport httpTransport = GoogleNetHttpTransport.newTrustedTransport();
 
-        return new Sheets.Builder(httpTransport, JSON_FACTORY, getCredentials(httpTransport))
+        return new Sheets.Builder(httpTransport, jsonFactory, getCredentials(httpTransport))
                 .setApplicationName(applicationName)
                 .build();
     }
@@ -63,8 +65,8 @@ public class GoogleSheetsService implements GoogleSheets {
     public List<Customer> getValues() {
         ValueRange response = null;
         try {
-            response = SHEETS_SERVICE.spreadsheets().values()
-                    .get(SPREADSHEET_ID, APPLICATION_NAME)
+            response = sheetsService.spreadsheets().values()
+                    .get(spreadsheetId, applicationName)
                     .execute();
         } catch (IOException e) {
             e.printStackTrace();
@@ -110,7 +112,6 @@ public class GoogleSheetsService implements GoogleSheets {
     }
 
     private List<Object> parseCustomerForSheetsData(Customer customer) {
-        RatingHandler ratingHandler = new RatingHandler(DB_SERVICE);
         List<Object> jCustomer = new ArrayList<>();
         jCustomer.add(customer.getPhoneNumber());
         jCustomer.add(customer.getName());
@@ -123,9 +124,9 @@ public class GoogleSheetsService implements GoogleSheets {
 
 
     private Sheet prepareSheetData() {
-        List<Customer> customers = DB_SERVICE.getAllCustomers();
+        List<Customer> customers = dbService.getAllCustomers();
         Sheet sheet = new Sheet();
-        sheet.setRange(APPLICATION_NAME + "!A1:F" + (customers.size() + 1));
+        sheet.setRange(applicationName + "!A1:F" + (customers.size() + 1));
         sheet.setMajorDimension("ROWS");
         List<Object> title = titleForGoogleSheet();
         List<List<Object>> resultList = new ArrayList<>();
@@ -149,7 +150,7 @@ public class GoogleSheetsService implements GoogleSheets {
         requestBody.setMajorDimension("ROWS");
 
         Sheets.Spreadsheets.Values.Update request =
-                SHEETS_SERVICE.spreadsheets().values().update(SPREADSHEET_ID, sheet.getRange(), requestBody);
+                sheetsService.spreadsheets().values().update(spreadsheetId, sheet.getRange(), requestBody);
         request.setValueInputOption(valueInputOption);
         request.execute();
     }
